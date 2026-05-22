@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YouTube Tools – Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background:#0f172a;
+    color:#e5e7eb;
+}
+header{
+    background:#020617;
+    padding:20px;
+    text-align:center;
+}
+header a{
+    color:#38bdf8;
+    margin:0 15px;
+    text-decoration:none;
+    font-weight:600;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:30px;
+}
+.card{
+    background:#020617;
+    padding:25px;
+    margin-bottom:40px;
+    border-radius:14px;
+    box-shadow:0 0 30px rgba(0,0,0,.4);
+}
+h2{
+    color:#38bdf8;
+}
+input, select, textarea, button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
+    font-size:15px;
+}
+input, textarea, select{
+    background:#0f172a;
+    color:#fff;
+}
+button{
+    background:#38bdf8;
+    color:#020617;
+    font-weight:700;
+    cursor:pointer;
+}
+button:hover{
+    opacity:.9;
+}
+img{
+    width:100%;
+    max-width:480px;
+    margin-top:20px;
+    border-radius:10px;
+}
+small{
+    color:#9ca3af;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="#thumb">Thumbnail Downloader</a>
+    <a href="#tags">AI Tag Generator</a>
+</header>
+
+<div class="container">
+
+<!-- 🔥 TOOL 1 -->
+<div class="card" id="thumb">
+<h2>🎬 YouTube Thumbnail Downloader</h2>
+<small>Choose quality & auto download thumbnail</small>
+
+<input type="text" id="ytUrl" placeholder="Paste YouTube Video URL">
+
+<select id="quality">
+    <option value="maxresdefault">Max Quality (1280x720)</option>
+    <option value="hqdefault">High Quality (480x360)</option>
+    <option value="mqdefault">Medium Quality (320x180)</option>
+</select>
+
+<button onclick="downloadThumbnail()">Download Thumbnail</button>
+
+<div id="thumbResult"></div>
+</div>
+
+<!-- 🔥 TOOL 2 -->
+<div class="card" id="tags">
+<h2>🤖 YouTube AI Tag Generator</h2>
+<small>SEO optimized tags for better reach</small>
+
+<input type="text" id="tagInput" placeholder="Enter video topic (example: bike vlog)">
+
+<button onclick="generateAITags()">Generate Tags</button>
+
+<textarea id="tagOutput" rows="6" placeholder="Generated tags will appear here"></textarea>
+</div>
+
+</div>
+
+<script>
+async function downloadThumbnail() {
+    let url = document.getElementById("ytUrl").value.trim();
+    let quality = document.getElementById("quality").value;
+    let id = "";
+
+    if (url.includes("watch?v=")) {
+        id = url.split("watch?v=")[1].substring(0, 11);
+    } else if (url.includes("youtu.be/")) {
+        id = url.split("youtu.be/")[1].substring(0, 11);
+    } else {
+        alert("Invalid YouTube URL");
+        return;
+    }
+
+    let imgUrl = `https://img.youtube.com/vi/${id}/${quality}.jpg`;
+
+    // Preview image
+    document.getElementById("thumbResult").innerHTML =
+        `<img src="${imgUrl}"><p>Downloading...</p>`;
+
+    try {
+        const response = await fetch(imgUrl);
+
+        if (!response.ok) {
+            throw new Error("Thumbnail not found");
+        }
+
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "youtube-thumbnail.jpg";
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+
+    } catch (e) {
+        alert("Download failed. Try another quality.");
+    }
+}
+
+// 🔹 AI TAG GENERATOR
+function generateAITags(){
+    let k = document.getElementById("tagInput").value.trim();
+
+    if(k === ""){
+        alert("Topic likho");
+        return;
+    }
+
+    let tags = `
+${k},
+${k} video,
+${k} vlog,
+${k} tutorial,
+${k} hindi,
+${k} shorts,
+how to ${k},
+best ${k},
+${k} 2026,
+${k} youtube seo,
+${k} viral video
+`;
+
+    document.getElementById("tagOutput").value = tags.trim();
+}
+</script>
+
+</body>
+</html>
+>
